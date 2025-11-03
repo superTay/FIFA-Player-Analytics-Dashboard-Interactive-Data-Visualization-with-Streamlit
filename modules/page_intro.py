@@ -1,10 +1,10 @@
 # modules/page_intro.py
 """
-Page 1: Introduction, data loading, and cleaning.
+Page 1: Introduction — data loading, cleaning, and descriptive overview.
 
-- Loads FIFA dataset from local CSV.
-- Cleans and prepares data for visualization.
-- Displays dataset overview and HTML description.
+- Initializes session state for persistence.
+- Loads and cleans the FIFA dataset (cached).
+- Displays preview, summary stats, and dataset dictionary.
 """
 
 import streamlit as st
@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 def show():
-    """Render the Introduction page with local dataset loading, cleaning, and summary."""
+    """Render the Introduction page with dataset info and cleaning."""
 
     st.title("🏁 FIFA Player Analytics Dashboard ⚽")
     st.write("""
@@ -21,11 +21,15 @@ def show():
     filter, and visualize data related to player performance and attributes.
     """)
 
+    # --- INITIALIZE SESSION STATE ---
+    if "df" not in st.session_state:
+        st.session_state["df"] = pd.DataFrame()  # ensure existence before any access
+
     # --- LOCAL DATASET PATH ---
     DATA_PATH = "./data/players_21.csv"
     st.markdown("📂 **Data source:** Local file (`./data/players_21.csv`)")
 
-    # --- DATA LOADING + CLEANING ---
+    # --- CACHED LOADING FUNCTION ---
     @st.cache_data
     def get_data(path: str) -> pd.DataFrame:
         """Load and clean the FIFA dataset (cached)."""
@@ -37,38 +41,30 @@ def show():
     def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         """
         Clean and preprocess the FIFA dataset.
-
-        Steps:
-        1. Drop unnecessary or redundant columns.
-        2. Handle missing values.
-        3. Convert data types.
-        4. Standardize categorical variables if needed.
         """
-        # 1️⃣ Drop unneeded columns
+        # Drop unnecessary columns
         cols_to_drop = [
             "player_url", "sofifa_id", "nation_logo_url", "club_logo_url",
             "club_flag_url", "player_face_url"
         ]
         df = df.drop(columns=[c for c in cols_to_drop if c in df.columns], errors="ignore")
 
-        # 2️⃣ Handle missing values
-        # Fill numeric NaNs with median and categorical with 'Unknown'
+        # Fill missing values
         num_cols = df.select_dtypes(include=["int64", "float64"]).columns
         cat_cols = df.select_dtypes(include=["object"]).columns
-
         df[num_cols] = df[num_cols].fillna(df[num_cols].median())
         df[cat_cols] = df[cat_cols].fillna("Unknown")
 
-        # 3️⃣ Convert types
+        # Convert date of birth
         if "dob" in df.columns:
             df["dob"] = pd.to_datetime(df["dob"], errors="coerce")
 
-        # Convert some relevant columns to category
+        # Convert categorical columns
         for col in ["nationality", "club_name", "preferred_foot", "player_positions"]:
             if col in df.columns:
                 df[col] = df[col].astype("category")
 
-        # 4️⃣ Rename columns (snake_case)
+        # Rename columns
         df.columns = (
             df.columns
             .str.lower()
@@ -78,34 +74,39 @@ def show():
 
         return df
 
-    # --- LOAD DATA (cached) ---
-    if "df" not in st.session_state:
+    # --- LOAD DATA INTO SESSION STATE ---
+    if st.session_state["df"].empty:
         with st.spinner("Loading and cleaning dataset..."):
             st.session_state["df"] = get_data(DATA_PATH)
         st.success("✅ Local player data successfully cleaned and loaded!")
 
     df = st.session_state["df"]
 
-    # --- DATA PREVIEW ---
-    st.subheader("📋 Dataset Preview")
-    st.dataframe(df.head(), use_container_width=True)
+    # --- EXPANDER 1: Dataset Preview ---
+    with st.expander("📋 Dataset Preview (First 10 Rows)", expanded=True):
+        st.dataframe(df.head(10), use_container_width=True)
 
-    # --- STATS ---
-    with st.expander("📊 Dataset Information"):
+    # --- EXPANDER 2: Descriptive Statistics ---
+    with st.expander("📈 Descriptive Statistics"):
+        st.dataframe(df.describe(include="all").transpose(), use_container_width=True)
+
+    # --- EXPANDER 3: Dataset Information ---
+    with st.expander("ℹ️ Dataset Info"):
         st.write(f"**Rows:** {df.shape[0]}")
         st.write(f"**Columns:** {df.shape[1]}")
         st.write("**Column names (first 15):**")
         st.write(df.columns.tolist()[:15])
 
-    # --- HTML DESCRIPTION ---
-    show_html_description("./assets/dataset_description.html")
+    # --- EXPANDER 4: Dataset Dictionary (HTML) ---
+    with st.expander("📖 Dataset Dictionary (from Kaggle)"):
+        show_html_description("./assets/dataset_description.html")
 
 
 def show_html_description(html_path: str):
     """Render dataset description HTML if available."""
     html_file = Path(html_path)
     if html_file.exists():
-        st.subheader("🧾 Dataset Description")
         st.components.v1.html(html_file.read_text(), height=400, scrolling=True)
     else:
-        st.info("ℹ️ Dataset description file not found (`dataset_description.html`).")
+        st.warning("⚠️ Dataset description file not found (`dataset_description.html`).")
+
