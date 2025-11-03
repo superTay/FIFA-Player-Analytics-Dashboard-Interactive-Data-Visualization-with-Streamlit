@@ -96,3 +96,16 @@ def show():
         st.write(f"**Columns:** {df.shape[1]}")
         st.write("**Column names (first 15):**")
         st.write(df.columns.tolist()[:15])
+
+    # --- HTML DESCRIPTION ---
+    show_html_description("./assets/dataset_description.html")
+
+
+def show_html_description(html_path: str):
+    """Render dataset description HTML if available."""
+    html_file = Path(html_path)
+    if html_file.exists():
+        st.subheader("🧾 Dataset Description")
+        st.components.v1.html(html_file.read_text(), height=400, scrolling=True)
+    else:
+        st.info("ℹ️ Dataset description file not found (`dataset_description.html`).")
