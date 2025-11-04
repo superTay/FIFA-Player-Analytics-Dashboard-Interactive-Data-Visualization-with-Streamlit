@@ -13,6 +13,12 @@ import joblib  # For loading the pre-trained model
 from pathlib import Path
 
 
+@st.cache_resource
+def load_model():
+    model_path = Path("assets/model_fifa.pkl")
+    return joblib.load(model_path)
+
+
 def show():
     """Render the Predictive Model page."""
 
