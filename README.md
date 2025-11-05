@@ -11,9 +11,9 @@
 
 <!-- 🔹 Dynamic GitHub Badges -->
 
-![Repo Size](https://img.shields.io/github/repo-size/christianmarzaldellarovere/fifa-player-analytics)
-![Last Commit](https://img.shields.io/github/last-commit/christianmarzaldellarovere/fifa-player-analytics)
-![Stars](https://img.shields.io/github/stars/christianmarzaldellarovere/fifa-player-analytics?style=social)
+![Repo Size](https://img.shields.io/github/repo-size/superTay/fifa-player-analytics)
+![Last Commit](https://img.shields.io/github/last-commit/superTay/fifa-player-analytics)
+![Stars](https://img.shields.io/github/stars/superTay/fifa-player-analytics?style=social)
 
 # ⚽ FIFA Player Analytics Dashboard
 
