@@ -9,12 +9,6 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Platform](https://img.shields.io/badge/Platform-Streamlit%20Cloud-orange)
 
-<!-- 🔹 Dynamic GitHub Badges -->
-
-![Repo Size](https://img.shields.io/github/repo-size/superTay/fifa-player-analytics)
-![Last Commit](https://img.shields.io/github/last-commit/superTay/fifa-player-analytics)
-![Stars](https://img.shields.io/github/stars/superTay/fifa-player-analytics?style=social)
-
 # ⚽ FIFA Player Analytics Dashboard
 
 An interactive and modular **Streamlit dashboard** for exploring, visualizing, and predicting FIFA player statistics.  
