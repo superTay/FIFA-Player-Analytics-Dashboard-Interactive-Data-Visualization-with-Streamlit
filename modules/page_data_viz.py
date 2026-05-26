@@ -90,7 +90,7 @@ def show():
         )
 
         st.success(f"✅ {len(df_fil):,} players match the filters.")
-        st.dataframe(df_fil.head(10), use_container_width=True)
+        st.dataframe(df_fil.head(10), width="stretch")
     else:
         st.info("Adjust filters and click **Update DataFrame** to refresh data.")
 
@@ -141,7 +141,9 @@ def show():
 
         # Render the selected plot
         fig = generate_plot(df_fil, plot_type, x_col, y_col, color_col)
-        fig_container.plotly_chart(fig, use_container_width=True)
+        # plotly_chart already defaults to full container width; the explicit
+        # use_container_width arg is deprecated, so it is omitted.
+        fig_container.plotly_chart(fig)
 
     else:
         st.info("No filtered data available. Apply filters to generate a plot.")

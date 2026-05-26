@@ -4,7 +4,7 @@ Main Streamlit app for FIFA Player Analytics Dashboard.
 This script defines the overall structure, configuration, and navigation
 between pages (Intro, Data Visualization, and Predictive Model).
 
-Author: Your Name
+Author: Christian Marzal Della Rovere
 """
 
 import streamlit as st
@@ -23,7 +23,7 @@ def main():
         menu_items={
             'Get help': 'https://docs.streamlit.io/',
             'Report a bug': 'https://github.com/superTay/FIFA-Player-Analytics-Dashboard-Interactive-Data-Visualization-with-Streamlit',
-            'About': 'Developed by Your Name as a Streamlit Advanced Module project.'
+            'About': 'Developed by Christian Marzal Della Rovere as a Streamlit Advanced Module project.'
         }
     )
 

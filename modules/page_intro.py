@@ -8,6 +8,7 @@ Page 1: Introduction — data loading, cleaning, and descriptive overview.
 """
 
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 from pathlib import Path
 
@@ -84,11 +85,13 @@ def show():
 
     # --- EXPANDER 1: Dataset Preview ---
     with st.expander("📋 Dataset Preview (First 10 Rows)", expanded=True):
-        st.dataframe(df.head(10), use_container_width=True)
+        st.dataframe(df.head(10), width="stretch")
 
     # --- EXPANDER 2: Descriptive Statistics ---
     with st.expander("📈 Descriptive Statistics"):
-        st.dataframe(df.describe(include="all").transpose(), use_container_width=True)
+        # .astype(str) avoids a pyarrow serialization error: describe() mixes
+        # datetime (from 'dob') and numeric stats in the same column.
+        st.dataframe(df.describe(include="all").transpose().astype(str), width="stretch")
 
     # --- EXPANDER 3: Dataset Information ---
     with st.expander("ℹ️ Dataset Info"):
@@ -106,7 +109,7 @@ def show_html_description(html_path: str):
     """Render dataset description HTML if available."""
     html_file = Path(html_path)
     if html_file.exists():
-        st.components.v1.html(html_file.read_text(), height=400, scrolling=True)
+        components.html(html_file.read_text(), height=400, scrolling=True)
     else:
         st.warning("⚠️ Dataset description file not found (`dataset_description.html`).")
 
